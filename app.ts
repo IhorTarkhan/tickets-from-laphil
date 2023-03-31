@@ -17,7 +17,7 @@ const sectionsPromise = fetch("https://my.laphil.com/en/rest-proxy/ReferenceData
 
 const handleAvailableTicketsById: Reader<Dependencies, RequestHandler> = (deps: Dependencies) =>
     (request: Request, response: Response) => {
-        const id: string = "7288";
+        const id: string = request.params.performanceId;
         // todo: `modeOfSaleId=4` - why 4? with 0, 1, 2, 3 it is not work
         fetch(`https://my.laphil.com/en/rest-proxy/TXN/Performances/${id}/Seats?constituentId=0&modeOfSaleId=4&performanceId=${id}`)
             .then(res => res.json())
@@ -36,7 +36,7 @@ const handleAvailableTicketsById: Reader<Dependencies, RequestHandler> = (deps: 
 Promise.all([sectionsPromise]).then(([sections]) => {
     const deps: Dependencies = {sections}
 
-    app.get("/laphil/available-tickets", handleAvailableTicketsById(deps));
+    app.get("/laphil/available-tickets/:performanceId", handleAvailableTicketsById(deps));
 
     app.listen(port, () => {
         console.log(`Application is running on port ${port}.`);
